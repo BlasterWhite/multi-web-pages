@@ -1,6 +1,7 @@
 import { WindowState } from "./types";
 import { getWindowCenter } from "./windowState";
 import { WindowWorkerHandler } from "./workerHandler";
+import "./style.css";
 
 type Coordinates = {
   x: number;
@@ -8,10 +9,10 @@ type Coordinates = {
 };
 
 const baseChange = ({
-                      currentWindowOffset,
-                      targetWindowOffset,
-                      targetPosition,
-                    }: {
+  currentWindowOffset,
+  targetWindowOffset,
+  targetPosition,
+}: {
   currentWindowOffset: Coordinates;
   targetWindowOffset: Coordinates;
   targetPosition: Coordinates;
@@ -40,10 +41,10 @@ const drawMainCircle = (ctx: CanvasRenderingContext2D, center: Coordinates) => {
 };
 
 const drawConnectingLine = ({
-                              ctx,
-                              hostWindow,
-                              targetWindow,
-                            }: {
+  ctx,
+  hostWindow,
+  targetWindow,
+}: {
   ctx: CanvasRenderingContext2D;
   hostWindow: WindowState;
   targetWindow: WindowState;
@@ -58,6 +59,7 @@ const drawConnectingLine = ({
     x: targetWindow.screenX,
     y: targetWindow.screenY,
   };
+
   const origin = getWindowCenter(hostWindow);
   const target = getWindowCenter(targetWindow);
 
@@ -76,17 +78,14 @@ const drawConnectingLine = ({
   ctx.closePath();
 };
 
-function displayDebugInfo(
-  ctx: CanvasRenderingContext2D,
-  center: Coordinates,
-  currentWindow: WindowState
-) {
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "black";
+function displayDebugInfo(ctx: CanvasRenderingContext2D, center: Coordinates) {
+  console.log(center);
+  ctx.font = "24px Arial";
+  ctx.fillStyle = "white";
   ctx.fillText(
-    `x: ${window.screenX} y: ${window.screenY}`,
-    center.x,
-    center.y
+    `x: ${window.screenX} y: ${window.screenY} width: ${window.innerWidth} height: ${window.innerHeight}`,
+    10,
+    30,
   );
 }
 
@@ -105,8 +104,8 @@ function main() {
 
   workerHandler.onSync((windows) => {
     ctx.reset();
-    drawMainCircle(ctx, center);
-    displayDebugInfo(ctx, center, currentWindow);
+    drawMainCircle(ctx, getMyCenter());
+    displayDebugInfo(ctx, getMyCenter());
     windows
       .filter((w) => w.id !== currentId)
       .forEach(({ windowState: targetWindow }) => {
@@ -122,11 +121,32 @@ function main() {
     workerHandler.windowHasChanged();
   }, 100);
 
-  window.addEventListener('resize', () => {
-    drawMainCircle(ctx, getWindowCenter(workerHandler.currentWindow));
+  window.addEventListener("resize", () => {
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
   });
-
 }
 
+function getWindow(): WindowState {
+  console.log(
+    window.screenX,
+    window.screenY,
+    window.innerWidth,
+    window.innerHeight,
+  );
+  return {
+    screenX: window.screenX,
+    screenY: window.screenY,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+}
+
+function getMyCenter(): Coordinates {
+  return {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+  };
+}
 
 main();

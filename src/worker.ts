@@ -13,7 +13,7 @@ onconnect = ({ ports }: MessageEvent<WorkerMessage>) => {
       w.port.postMessage({
         action: "sync",
         payload: { allWindows: JSON.parse(JSON.stringify(windows)) },
-      } satisfies WorkerMessage)
+      } satisfies WorkerMessage),
     );
   };
   nextId += 1;

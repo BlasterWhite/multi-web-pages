@@ -1,4 +1,4 @@
-import {WindowState} from "./types";
+import { WindowState } from "./types";
 
 export const getCurrentWindowState = (): WindowState => ({
   screenX: window.screenX,
@@ -8,9 +8,9 @@ export const getCurrentWindowState = (): WindowState => ({
 });
 
 export const didWindowChange = ({
-                                  newWindow,
-                                  oldWindow,
-                                }: {
+  newWindow,
+  oldWindow,
+}: {
   newWindow: WindowState;
   oldWindow?: WindowState;
 }) => {
@@ -26,7 +26,10 @@ export const didWindowChange = ({
   return result;
 };
 
-export const getWindowCenter = (win: WindowState) => ({
-  x: win.width / 2,
-  y: win.height / 2,
-});
+export const getWindowCenter = (win: WindowState) => {
+  // console.log(win);
+  return {
+    x: win.width / 2,
+    y: win.height / 2,
+  };
+};

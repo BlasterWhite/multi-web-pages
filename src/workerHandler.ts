@@ -7,7 +7,7 @@ type OnSyncCallbackFunction = (allWindows: StateWithId[]) => void;
 export class WindowWorkerHandler {
   windows: StateWithId[] = [];
   currentWindow: WindowState = getCurrentWindowState();
-  id: number;
+  id: number | undefined;
   onSyncCallbacks: OnSyncCallbackFunction[] = [];
   worker: SharedWorker;
 
@@ -61,6 +61,7 @@ export class WindowWorkerHandler {
       })
     ) {
       this.currentWindow = newWindow;
+      // @ts-ignore
       this.worker.port.postMessage({
         action: "windowStateChanged",
         payload: { id: this.id, newWindow, oldWindow },
